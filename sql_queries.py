@@ -21,21 +21,20 @@ artist_table_create = (""" CREATE TABLE IF NOT EXISTS artists
 (artist_id text PRIMARY KEY, name text, location text, latitude float, longitude float);""")
 
 time_table_create = (""" CREATE TABLE IF NOT EXISTS time
-(start_time bigint, hour int, day int, week int, month int, year int, weekday text);""")
+(start_time bigint, hour int, day int, week int, month int, year int, weekday int);""")
 
 # INSERT RECORDS
 
 songplay_table_insert = ("""""")
 
-user_table_insert = ("""""")
+user_table_insert = ("""INSERT INTO users (user_id, first_name, last_name, gender, level) VALUES (%s,%s,%s,%s,%s) ON CONFLICT DO NOTHING;""")
 
 song_table_insert = ("""INSERT INTO songs (song_id, title, artist_id, year, duration) VALUES (%s,%s,%s,%s,%s);""")
 
 artist_table_insert = ("""INSERT INTO artists (artist_id, name, location, latitude, longitude) VALUES (%s,%s,%s,%s,%s);""")
 
 
-time_table_insert = ("""
-""")
+time_table_insert = ("""INSERT INTO time (start_time, hour, day, week, month, year, weekday) VALUES (%s,%s,%s,%s,%s,%s,%s);""")
 
 # FIND SONGS
 
