@@ -6,6 +6,17 @@ from sql_queries import *
 
 
 def process_song_file(cur, filepath):
+    """
+    Description: This function is responsible for opening a song file at the given path,
+    extract the song record and the artist record and insert them into the database
+
+    Arguments:
+        cur: the cursor object.
+        filepath: log data or song data file path.
+
+    Returns:
+        None
+    """
     # open song file
     df = pd.read_json(filepath,lines=True) 
 
@@ -19,6 +30,18 @@ def process_song_file(cur, filepath):
 
 
 def process_log_file(cur, filepath):
+    """
+    Description: This function is responsible for opening a log file at the given path,
+    extract the data filtering by NextSong action, and save into the database the information about
+    time, users and records
+
+    Arguments:
+        cur: the cursor object.
+        filepath: log data or song data file path.
+
+    Returns:
+        None
+    """
     # open log file
     df = pd.read_json(filepath,lines=True)
 
@@ -28,6 +51,15 @@ def process_log_file(cur, filepath):
     # insert time data records 
     time_df = df[["ts"]].copy()
     def convert_time_columns(ts):
+        """
+        Description: This function is responsible for converting a timestamp to a datetime object, extracting all the information
+
+        Arguments:
+            ts: timestamp row
+
+        Returns:
+            Tuple containing hour, day, week, month, year and weekday extracted from the timestamp
+        """
         date_t = pd.to_datetime(ts["ts"], unit = 'ms')
         return date_t.hour, date_t.day, date_t.week, date_t.month, date_t.year, date_t.weekday()
     time_df['hour'],time_df['day'],time_df['week'],time_df['month'],time_df['year'],time_df['weekday']  = zip(*time_df.apply(convert_time_columns, axis=1))  
@@ -60,6 +92,20 @@ def process_log_file(cur, filepath):
 
 
 def process_data(cur, conn, filepath, func):
+    """
+    Description: This function is responsible for listing the files in a directory,
+    and then executing the ingest process for each file according to the function
+    that performs the transformation to save it to the database.
+
+    Arguments:
+        cur: the cursor object.
+        conn: connection to the database.
+        filepath: log data or song data file path.
+        func: function that transforms the data and inserts it into the database.
+
+    Returns:
+        None
+    """
     # get all files matching extension from directory
     all_files = []
     for root, dirs, files in os.walk(filepath):
@@ -79,6 +125,16 @@ def process_data(cur, conn, filepath, func):
 
 
 def main():
+    """
+    Description: This function connects to the database, calls the functions to process
+    all the log files and then it closes the database connection
+
+    Arguments:
+        None
+
+    Returns:
+        None
+    """
     conn = psycopg2.connect("host=127.0.0.1 dbname=sparkifydb user=student password=student")
     cur = conn.cursor()
 
